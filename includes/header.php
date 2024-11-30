@@ -442,14 +442,75 @@
         <button type="submit" name="site" value="glowna"><img src="images/logo.png" alt=""></button>
         <input type="checkbox" onclick="ChangeHref(event)" style="margin-right: 20px" <?php if(isset($_GET['dm'])) echo 'checked'?> name="dm" class="dark-mode-checkbox"> <span id="background" class="bg-light"></span>
         <div id="desktop-buttons">
-            <a id="login-button" href="login.php"><i style="font-size: 20px; vertical-align: middle;" class="fa-sharp fa-solid fa-right-to-bracket"></i></a>
+            
             <?php if(isset($_SESSION['userid'])) echo '<a id="profile-button" href="profil.php"><i style="font-size: 20px; vertical-align: middle;" class="fa-solid fa-user"></i></a>
-            <a id="add-button" href="dodaj.php"><i style="font-size: 20px; vertical-align: middle;" class="fa-solid fa-pen-nib"></i></a>'?>
+            <a id="add-button" href="dodaj.php"><i style="font-size: 20px; vertical-align: middle;" class="fa-solid fa-pen-nib"></i></a>
+            <a id="login-button" href="logout.php"><i style="font-size: 20px; vertical-align: middle;" class="fa-sharp fa-solid fa-right-to-bracket"></i></a>';
+                    else echo '<a id="login-button" href="login.php"><i style="font-size: 20px; vertical-align: middle;" class="fa-sharp fa-solid fa-right-to-bracket"></i></a>'?>
         </div>
-        <div action="index.php" method="get" id="desktop-menu">
+
+
+        <?php
+// Połączenie z bazą danych
+$db = parse_ini_file('config.ini');
+
+$link = new mysqli($db['db_host'], $db['db_user'], $db['db_password'], $db['db_name']);
+
+// Sprawdzenie połączenia
+if ($link->connect_error) {
+    die("Błąd połączenia: " . $link->connect_error);
+}
+
+// Zapytanie SQL, aby pobrać dane
+$query = "SELECT nazwa FROM er_sekcja"; // Zamień 'your_table_name' na nazwę swojej tabeli
+$result = $link->query($query);
+
+// Aktualnie wybrana strona
+$currentSite = isset($_GET['site']) ? $_GET['site'] : '';
+
+// Generowanie selektora
+echo "<div id='desktop-menu'>\n";
+echo "<select id='siteSelector' name='site'>\n";
+echo "<option value=''>-- Wybierz opcję --</option>\n"; // Opcja domyślna
+
+if ($result && $result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
+        $selected = ($row['nazwa'] === $currentSite) ? 'selected' : '';
+        echo "<option value='" . htmlspecialchars($row['nazwa']) . "' $selected>" . 
+             htmlspecialchars($row['nazwa']) . "</option>\n";
+    }
+}
+
+echo "</select>\n";
+echo "</div>\n";
+
+// Zamknięcie połączenia
+$link->close();
+?>
+
+<script>
+// Obsługa zdarzenia zmiany w selektorze
+document.getElementById('siteSelector').addEventListener('change', function() {
+    var selectedValue = this.value;
+    if (selectedValue) {
+        // Przekierowanie na stronę z parametrem `site`
+        window.location.href = "index.php?site=" + encodeURIComponent(selectedValue);
+    }
+});
+</script>
+
+
+
+
+
+
+
+
+            
+        <!-- <div action="index.php" method="get" id="desktop-menu">
             <button type="submit" class="poppins <?php if(isset($_GET['site'])) if($_GET['site'] == 'programista') echo 'chosen-color'?>" name="site" value="programista"><i class="fa fa-desktop" style="font-size: 20px;"></i> Programista</a>
-            <button type="submit" class="poppins <?php if(isset($_GET['site'])) if($_GET['site'] == 'gastronom') echo 'chosen-color'?>" name="site" value="gastronom"><i class="fa-solid fa-utensils" style="font-size: 20px;"></i> Gastronomia</a>
-        </div>
+            <button type="submit" class="poppins <?php if(isset($_GET['site'])) if($_GET['site'] == 'gastronomia') echo 'chosen-color'?>" name="site" value="gastronom"><i class="fa-solid fa-utensils" style="font-size: 20px;"></i> Gastronomia</a>
+        </div> -->
     </div>
     </form action="index.php" method="get">
         <div id="header-content-mobile" class="mobile-display">
@@ -461,7 +522,7 @@
             
             <div id="mobile-menu">
                 <button type="submit" class="poppins <?php if(isset($_GET['site'])) if($_GET['site'] == 'programista') echo 'chosen-color'?>" name="site" value="programista"><i class="fa fa-desktop" style="font-size: 20px;"></i> Programista</button>
-                <button type="submit" class="poppins <?php if(isset($_GET['site'])) if($_GET['site'] == 'gastronom') echo 'chosen-color'?>" name="site" value="gastronom" style="margin-top: -1px"><i class="fa-solid fa-utensils" style="font-size: 20px;"></i> Gastronomia</button>
+                <button type="submit" class="poppins <?php if(isset($_GET['site'])) if($_GET['site'] == 'gastronomia') echo 'chosen-color'?>" name="site" value="gastronom" style="margin-top: -1px"><i class="fa-solid fa-utensils" style="font-size: 20px;"></i> Gastronomia</button>
                 <a class="mobile-menu-link" href="login.php" class="poppins" style="margin-top: -1px"><i class="fa-sharp fa-solid fa-right-to-bracket" style="font-size: 20px;"></i> Zaloguj się</a>
                 <?php 
                     if(isset($_SESSION['userid'])) echo '<a class="mobile-menu-link" href="profil.php" class="poppins" style="margin-top: -1px"><i class="fa-solid fa-user" style="font-size: 20px;"></i> Profil</a>';

@@ -45,7 +45,7 @@
         <hr id="mobile-content-divider">
         <p style="flex: 1.5 1 0px;">
         <i><strong>Koordynator projektu:</strong> Elżbieta Wojnowicz</i><br>
-        <i><strong>Z-ca koordynatora projektu:</strong>  Marta Aleksiewicz-Drab</i>
+        <i><strong>Z-ca koordynatora projektu:</strong>  Marta Aleksiewicz</i>
         </p>
     </div>
     
