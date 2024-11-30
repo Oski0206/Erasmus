@@ -53,5 +53,5 @@
 
 <footer>
     <hr>
-    © 2023 Paweł Szczypuła & Patryk Widło | Erasmus+ :: ZSTiB Brzesko 
+    © 2023  | Erasmus+ :: ZSTiB Brzesko 
 </footer>

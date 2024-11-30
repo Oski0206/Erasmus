@@ -173,11 +173,20 @@
 
     $link -> set_charset('utf8');
 
+
+    //tutaj sie dodaje site to nazwa strony w bazie a id to jej id
     if (isset($_GET['site'])) {
       if ($_GET['site'] === "programista") {
           $section_id = '1'; // Sekcja dla programisty
-      } elseif ($_GET['site'] === "gastronomia") {
+      } 
+      elseif ($_GET['site'] === "gastronomia") {
           $section_id = '2'; // Sekcja dla gastronomii
+      } 
+      elseif ($_GET['site'] === "chuj wie") {
+        $section_id = '3'; // Sekcja dla chuj wie
+      } 
+      elseif ($_GET['site'] === "programisci i informatycy") {
+        $section_id = '4'; // Sekcja programistow i informatykow
       } else {
           $section_id = null; // Nieznana sekcja
           echo '<p>Nieznana sekcja: ' . htmlspecialchars($_GET['site']) . '</p>';

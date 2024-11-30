@@ -439,7 +439,7 @@
 <header class="sticky bg-main"> 
     <form action="index.php" method="get">
     <div id="header-content-desktop" class="desktop-display">
-        <button type="submit" name="site" value="glowna"><img src="images/logo.png" alt=""></button>
+    <a href="index.php"><img src="images/logo.png" alt=""></a>
         <input type="checkbox" onclick="ChangeHref(event)" style="margin-right: 20px" <?php if(isset($_GET['dm'])) echo 'checked'?> name="dm" class="dark-mode-checkbox"> <span id="background" class="bg-light"></span>
         <div id="desktop-buttons">
             
