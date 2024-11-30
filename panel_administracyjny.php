@@ -56,13 +56,11 @@
                 $link = new mysqli($db['db_host'], $db['db_user'], $db['db_password'], $db['db_name']);
                 $link -> set_charset('utf8');
 
-                $query = "INSERT INTO `".$db['db_prefix']."uzytkownik` (`id`, `login`, `haslo`, `imie`, `nazwisko`, `admin`, `programista_art`, `gastronomia_art`) VALUES (NULL, ?, ?, ?, ?, ?, ?, ?)";
+                $query = "INSERT INTO `".$db['db_prefix']."uzytkownik` (`id`, `login`, `haslo`, `imie`, `nazwisko`, `admin`) VALUES (NULL, ?, ?, ?, ?, ?)";
                 $stmt = $link -> prepare($query);
                 $hash = (string)password_hash($_POST['haslo'], PASSWORD_DEFAULT);
                 $admin = isset($_POST['admin']);
-                $prog = isset($_POST['programista_art']);
-                $gast = isset($_POST['gastronomia_art']);
-                $stmt->bind_param("ssssiii", $_POST['login'], $hash, $_POST['imie'], $_POST['nazwisko'], $admin, $prog, $gast);
+                $stmt->bind_param("ssssi", $_POST['login'], $hash, $_POST['imie'], $_POST['nazwisko'], $admin);
                 $stmt->execute();
                 $link -> close();
             }
@@ -76,8 +74,6 @@
             echo '<th>Login</th>';
             echo '<th>Imie</th>';
             echo '<th>Nazwisko</th>';
-            echo '<th>Prog</th>';
-            echo '<th>Gast</th>';
             echo '<th>Admin</th>';
             echo '</tr>';
             $link = new mysqli($db['db_host'], $db['db_user'], $db['db_password'], $db['db_name']);
@@ -89,8 +85,6 @@
                 echo '<td>'.$wiersz['login'].'</td>';
                 echo '<td>'.$wiersz['imie'].'</td>';
                 echo '<td>'.$wiersz['nazwisko'].'</td>';
-                echo '<td>'.$wiersz['programista_art'].'</td>';
-                echo '<td>'.$wiersz['gastronomia_art'].'</td>';
                 echo '<td>'.$wiersz['admin'].'</td>';
                 echo '</tr>';
             }
@@ -100,8 +94,6 @@
             echo '<td><input name="login" type="text"></td>';
             echo '<td><input name="imie" type="text"></td>';
             echo '<td><input name="nazwisko" type="text"></td>';
-            echo '<td><input name="programista_art" type="checkbox"></td>';
-            echo '<td><input name="gastronomia_art" type="checkbox"></td>';
             echo '<td><input name ="admin" type="checkbox"> <button type="submit">dodaj</button></td>';
             echo '</tr>';
                 

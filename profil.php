@@ -52,11 +52,8 @@
                 echo '<h1>'.$userdata['imie'].' '.$userdata['nazwisko'].'</h1>';
                 echo '<p><strong>Login</strong>: '.$userdata['login'].'</p><br>';
                 echo '<h2>Uprawnienia: </h2>';
-                echo '<p><strong>Sekcja "Programista"</strong>: <i>';
-                echo (bool)$userdata['programista_art'] ? 'tak' : 'nie';
-                echo '</i></p>';
-                echo '<p><strong>Sekcja "Gastronomia"</strong>: <i>';
-                echo (bool)$userdata['gastronomia_art'] ? 'tak' : 'nie';
+                echo '<p><strong>Admin</strong>: <i>';
+                echo (bool)$userdata['admin'] ? 'tak' : 'nie';
                 echo '</i></p>';
 
                 if(isset($_POST['pass']) && isset($_POST['newpass']) && isset($_POST['newpass2'])){

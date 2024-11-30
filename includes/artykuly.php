@@ -201,7 +201,7 @@
 
     if(isset($_POST['delete'])){
       $user = $link->query("select * from ".$db['db_prefix']."uzytkownik where id = ".$_SESSION['userid'])->fetch_assoc();
-      if($user['admin'] || ($user['programista_art'] && $section_id == 1) || $user['gastronomia_art'] && $section_id == 2){
+      if($user['admin']){
         $query = 'delete from '.$db['db_prefix'].'artykuly where id = ?';
         $stmt = $link -> prepare($query);
         $stmt -> bind_param('i', $_POST['delete']);

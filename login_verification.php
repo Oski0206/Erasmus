@@ -5,7 +5,7 @@
 
         $link -> set_charset('utf8');
 
-        $stmt = $link -> prepare("select id, login, haslo, programista_art, gastronomia_art from ".$db['db_prefix']."uzytkownik WHERE login = ?");
+        $stmt = $link -> prepare("select id, login, haslo from ".$db['db_prefix']."uzytkownik WHERE login = ?");
         $stmt -> bind_param('s', $login);
         $stmt->execute();
         $result = $stmt->get_result();
@@ -16,8 +16,6 @@
                 if(!password_verify($password, $wiersz['haslo'])) continue;
 
                 $_SESSION['userid'] = $wiersz['id']; 
-                $_SESSION['progperm'] = (bool)$wiersz['programista_art']; 
-                $_SESSION['gastperm'] = (bool)$wiersz['gastronomia_art']; 
                 $link -> close();
 
                 return true;
