@@ -451,9 +451,10 @@
 
 
         <?php
-// Połączenie z bazą danych
+// Ładowanie konfiguracji bazy danych
 $db = parse_ini_file('config.ini');
 
+// Połączenie z bazą danych
 $link = new mysqli($db['db_host'], $db['db_user'], $db['db_password'], $db['db_name']);
 
 // Sprawdzenie połączenia
@@ -462,7 +463,7 @@ if ($link->connect_error) {
 }
 
 // Zapytanie SQL, aby pobrać dane
-$query = "SELECT nazwa FROM er_sekcja"; // Zamień 'your_table_name' na nazwę swojej tabeli
+$query = "SELECT nazwa FROM er_sekcja"; // Zamień 'your_table_name' na swoją tabelę
 $result = $link->query($query);
 
 // Aktualnie wybrana strona
@@ -475,8 +476,10 @@ echo "<option value=''>-- Wybierz opcję --</option>\n"; // Opcja domyślna
 
 if ($result && $result->num_rows > 0) {
     while ($row = $result->fetch_assoc()) {
-        $selected = ($row['nazwa'] === $currentSite) ? 'selected' : '';
-        echo "<option value='" . htmlspecialchars($row['nazwa']) . "' $selected>" . 
+        // Użycie strtolower do zamiany na małe litery
+        $value = strtolower($row['nazwa']);
+        $selected = ($value === $currentSite) ? 'selected' : '';
+        echo "<option value='" . htmlspecialchars($value) . "' $selected>" . 
              htmlspecialchars($row['nazwa']) . "</option>\n";
     }
 }
@@ -498,6 +501,7 @@ document.getElementById('siteSelector').addEventListener('change', function() {
     }
 });
 </script>
+
 
 
 

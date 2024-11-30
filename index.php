@@ -28,7 +28,7 @@
         if(!isset($_GET['site']) || $_GET['site'] == 'glowna'){
             include 'includes/main_content.php';
         }
-        else if($_GET['site'] == 'programista' || $_GET['site'] == 'gastronom'){
+        else if($_GET['site'] == 'programista' || $_GET['site'] == 'gastronomia'){
             echo '<main>';
             include 'includes/artykuly.php';
             echo '</main>';

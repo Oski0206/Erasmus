@@ -173,7 +173,19 @@
 
     $link -> set_charset('utf8');
 
-    $section_id = $_GET['site'] == "programista" ? '1' : '2';
+    if (isset($_GET['site'])) {
+      if ($_GET['site'] === "programista") {
+          $section_id = '1'; // Sekcja dla programisty
+      } elseif ($_GET['site'] === "gastronomia") {
+          $section_id = '2'; // Sekcja dla gastronomii
+      } else {
+          $section_id = null; // Nieznana sekcja
+          echo '<p>Nieznana sekcja: ' . htmlspecialchars($_GET['site']) . '</p>';
+      }
+  } else {
+      $section_id = null; // Brak parametru 'site'
+      echo '<p>Brak wybranej sekcji</p>';
+  }
     if(isset($_POST['delete'])){
         //$link -> query('DELETE FROM artykuly WHERE id ='.$_POST['delete'].'');
     }
