@@ -1,3 +1,15 @@
+<?php
+// Ładowanie konfiguracji bazy danych
+$db = parse_ini_file('config.ini');
+
+// Połączenie z bazą danych
+$link = new mysqli($db['db_host'], $db['db_user'], $db['db_password'], $db['db_name']);
+
+// Sprawdzenie połączenia
+if ($link->connect_error) {
+    die("Błąd połączenia: " . $link->connect_error);
+}
+?>
 <style>
     :root {
         --bg-col-lm: #E5F6FF;
@@ -450,17 +462,8 @@
         </div>
 
 
-        <?php
-// Ładowanie konfiguracji bazy danych
-$db = parse_ini_file('config.ini');
+<?php
 
-// Połączenie z bazą danych
-$link = new mysqli($db['db_host'], $db['db_user'], $db['db_password'], $db['db_name']);
-
-// Sprawdzenie połączenia
-if ($link->connect_error) {
-    die("Błąd połączenia: " . $link->connect_error);
-}
 
 // Zapytanie SQL, aby pobrać dane
 $query = "SELECT nazwa FROM er_sekcja"; // Zamień 'your_table_name' na swoją tabelę

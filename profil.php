@@ -54,6 +54,7 @@
                 echo '<h2>Uprawnienia: </h2>';
                 echo '<p><strong>Admin</strong>: <i>';
                 echo (bool)$userdata['admin'] ? 'tak' : 'nie';
+                if((bool)$userdata['admin']) echo '<p><strong><a href="panel_administracyjny.php">Panel Administracyjny</a><strong><p>';
                 echo '</i></p>';
 
                 if(isset($_POST['pass']) && isset($_POST['newpass']) && isset($_POST['newpass2'])){

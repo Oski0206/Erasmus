@@ -1,4 +1,9 @@
-<?php session_start() ?>
+<?php 
+session_start();
+
+// Włącz buforowanie wyjścia
+ob_start();
+?>
 
 <!DOCTYPE html>
 <html lang="pl">
@@ -63,6 +68,58 @@
                 $stmt->bind_param("ssssi", $_POST['login'], $hash, $_POST['imie'], $_POST['nazwisko'], $admin);
                 $stmt->execute();
                 $link -> close();
+                
+            }
+
+            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                // Sprawdzenie danych
+                if (isset($_POST['sekcja']) && isset($_POST['rok'])) {
+                    $sekcja = trim($_POST['sekcja']);
+                    $rok = trim($_POST['rok']);
+
+                    // Walidacja danych
+                    if (empty($sekcja) || !preg_match('/^\d{4}$/', $rok) || $rok < 1901 || $rok > 2155) {
+                        die("Błąd: Wprowadź poprawne dane. Rok musi być w zakresie 1901–2155.");
+                    }
+
+                    // Połączenie z bazą danych
+                    $link = new mysqli($db['db_host'], $db['db_user'], $db['db_password'], $db['db_name']);
+                    $link->set_charset('utf8');
+
+                    if ($link->connect_error) {
+                        die("Błąd połączenia: " . $link->connect_error);
+                    }
+
+                    // Przygotowanie zapytania
+                    $query = "INSERT INTO `" . $db['db_prefix'] . "sekcja` (`id`, `nazwa`, `rok`) VALUES (NULL, ?, ?)";
+                    $stmt = $link->prepare($query);
+
+                    if (!$stmt) {
+                        die("Błąd w zapytaniu SQL: " . $link->error);
+                    }
+
+                    // Bindowanie i wykonanie zapytania
+                    $stmt->bind_param("ss", $sekcja, $rok);
+                    $stmt->execute();
+
+                    if ($stmt->error) {
+                        die("Błąd podczas wykonywania zapytania: " . $stmt->error);
+                    }
+
+                    $stmt->close();
+                    $link->close();
+
+                    // PRG: Przekierowanie po udanym zapisie
+                    header("Location: " . $_SERVER['PHP_SELF'] . "?success=1");
+                    exit;
+                } else {
+                    echo "Proszę uzupełnić wszystkie pola formularza.";
+                }
+            }
+
+            // Wyświetlenie komunikatu po przekierowaniu
+            if (isset($_GET['success']) && $_GET['success'] == 1) {
+                echo "Dane zostały zapisane.";
             }
 
             echo '<div id="content">';
@@ -100,6 +157,13 @@
             echo '</table>';
             echo '</form>';
             echo '</div>';
+
+            echo'<form action="panel_administracyjny.php" method="post">
+            <div>
+            <input type="text" name="sekcja" placeholder="Sekcja">
+            <input type="number" name="rok" placeholder="Rok" min="1900" max="2100">
+            <button type="submit">Dodaj sekcje</button>
+            </div></form>';
         }
     ?>
     

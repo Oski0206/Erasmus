@@ -168,33 +168,55 @@
 </div>
 
 <?php
-    $db = parse_ini_file('config.ini');
-    $link = new mysqli($db['db_host'], $db['db_user'], $db['db_password'], $db['db_name']);
+$db = parse_ini_file('config.ini');
+$link = new mysqli($db['db_host'], $db['db_user'], $db['db_password'], $db['db_name']);
+$link->set_charset('utf8');
 
-    $link -> set_charset('utf8');
+// Sprawdzanie, czy parametr 'site' jest przekazany w URL
+if (isset($_GET['site'])) {
+    $site_name = $_GET['site'];
+
+    // Połączenie z bazą danych
+    if ($link->connect_error) {
+        die("Błąd połączenia: " . $link->connect_error);
+    }
+
+    // Zapytanie do bazy danych, aby znaleźć sekcję na podstawie nazwy strony 'site'
+    $query = "SELECT id FROM `" . $db['db_prefix'] . "sekcja` WHERE nazwa = ?";
+    $stmt = $link->prepare($query);
+
+    // Sprawdzenie, czy zapytanie jest poprawne
+    if (!$stmt) {
+        die("Błąd w zapytaniu SQL: " . $link->error);
+    }
+
+    // Bindowanie parametru (nazwa strony) i wykonanie zapytania
+    $stmt->bind_param("s", $site_name);
+    $stmt->execute();
+
+    // Pobranie wyniku zapytania
+    $result = $stmt->get_result();
+
+    // Sprawdzenie, czy znaleziono odpowiednią sekcję
+    if ($result->num_rows > 0) {
+        // Pobranie ID sekcji
+        $row = $result->fetch_assoc();
+        $section_id = $row['id'];
+    } else {
+        $section_id = null; // Brak sekcji o podanej nazwie
+        echo '<p>Nieznana sekcja: ' . htmlspecialchars($site_name) . '</p>';
+    }
+
+    // Zamknięcie zapytania
+    $stmt->close();
+} else {
+    $section_id = null; // Brak parametru 'site'
+    echo '<p>Brak wybranej sekcji</p>';
+}
+
+// Zamykanie połączenia z bazą danych
 
 
-    //tutaj sie dodaje site to nazwa strony w bazie a id to jej id
-    if (isset($_GET['site'])) {
-      if ($_GET['site'] === "programista") {
-          $section_id = '1'; // Sekcja dla programisty
-      } 
-      elseif ($_GET['site'] === "gastronomia") {
-          $section_id = '2'; // Sekcja dla gastronomii
-      } 
-      elseif ($_GET['site'] === "chuj wie") {
-        $section_id = '3'; // Sekcja dla chuj wie
-      } 
-      elseif ($_GET['site'] === "programisci i informatycy") {
-        $section_id = '4'; // Sekcja programistow i informatykow
-      } else {
-          $section_id = null; // Nieznana sekcja
-          echo '<p>Nieznana sekcja: ' . htmlspecialchars($_GET['site']) . '</p>';
-      }
-  } else {
-      $section_id = null; // Brak parametru 'site'
-      echo '<p>Brak wybranej sekcji</p>';
-  }
     if(isset($_POST['delete'])){
         //$link -> query('DELETE FROM artykuly WHERE id ='.$_POST['delete'].'');
     }
