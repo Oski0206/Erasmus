@@ -10,6 +10,7 @@ if ($link->connect_error) {
     die("Błąd połączenia: " . $link->connect_error);
 }
 ?>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.css" rel="stylesheet"/>
 <style>
     :root {
         --bg-col-lm: #E5F6FF;
@@ -407,6 +408,90 @@ if ($link->connect_error) {
         left: 39px;
         transform: translateX(-100%);
     }
+     /* Styl dla selektora na desktopie i mobilce */
+#siteSelector {
+    padding: 10px 15px;
+    font-size: 16px;
+    background-color: var(--main-col);; /* Kolor tła zgodny z resztą przycisków */
+    color: white; /* Kolor tekstu na biały */
+    border: 1px solid white; /* Kolor obramowania pasujący do tła */
+    border-radius: 8px;
+    width: 100%; /* Dopasowanie szerokości selektora */
+    box-sizing: border-box; /* Włączenie paddingu do szerokości */
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+    -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background: url("http://cdn1.iconfinder.com/data/icons/cc_mono_icon_set/blacks/16x16/br_down.png")  no-repeat 96% var(--main-col) !important;
+}
+
+/* Stylowanie burger menu dla mobilki */
+@media screen and (max-width: 768px) {
+    .burger-menu-container {
+        display: flex;
+        flex-direction: column;
+        padding: 15px;
+        background-color: var(--main-col); /* Kolor tła burger menu */
+        border-radius: 10px;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    /* Dostosowanie selektora w burger menu */
+    #siteSelector {
+        font-size: 14px; /* Mniejsza czcionka na mobilce */
+        margin: 10px 0; /* Odstęp wokół selektora */
+        padding: 12px 15px;
+        background-color: var(--main-col); /* Używamy głównego koloru */
+        color: white; /* Kolor tekstu */
+        border: 1px solid var(--main-col); /* Obramowanie dopasowane do tła */
+        border-radius: 8px;
+        width: 100%; /* Dopasowanie szerokości do kontenera */
+        box-sizing: border-box;
+    }
+    
+    #category-selector-mobile
+    {
+        height:calc((60vh + 2.5vh) / 5);
+        margin: 0;
+        width: 100%;
+    }
+    select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background: url("http://cdn1.iconfinder.com/data/icons/cc_mono_icon_set/blacks/16x16/br_down.png")  no-repeat 96% var(--main-col) !important;
+ 
+}
+
+select::-ms-expand { display: none; }
+    /* Ustalamy wygląd przycisków burger menu */
+    .burger-menu-container button {
+        padding: 12px 20px;
+        background-color: var(--main-col);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        width: 100%;
+        margin: 5px 0;
+        font-size: 16px;
+    }
+
+    /* Styl hover dla przycisków */
+    .burger-menu-container button:hover {
+        background-color: darken(var(--main-col), 10%);
+    }
+}
+
+/* Wersja desktopowa */
+@media screen and (min-width: 769px) {
+    #siteSelector {
+        font-size: 16px;
+        margin: 10px 0;
+        width: auto;
+    }
+}
+    
 </style>
 
 
@@ -506,37 +591,84 @@ document.getElementById('siteSelector').addEventListener('change', function() {
 </script>
 
 
-
-
-
-
-
-
-
-            
-        <!-- <div action="index.php" method="get" id="desktop-menu">
-            <button type="submit" class="poppins <?php if(isset($_GET['site'])) if($_GET['site'] == 'programista') echo 'chosen-color'?>" name="site" value="programista"><i class="fa fa-desktop" style="font-size: 20px;"></i> Programista</a>
-            <button type="submit" class="poppins <?php if(isset($_GET['site'])) if($_GET['site'] == 'gastronomia') echo 'chosen-color'?>" name="site" value="gastronom"><i class="fa-solid fa-utensils" style="font-size: 20px;"></i> Gastronomia</a>
-        </div> -->
     </div>
     </form action="index.php" method="get">
-        <div id="header-content-mobile" class="mobile-display">
-            <div id="mobile-header-bg"></div>
-            <form action="index.php" method>
-            <button id="main-page-button" type="submit" name="site" value="glowna" style="margin-left: 10px"><i class="fa-solid fa-house" style="color: white; font-size: 24px; transform: translateY(4px)"></button></i></a>
-            <input type="checkbox" <?php if(isset($_GET['dm'])) echo 'checked'?> name="dm" class="dark-mode-checkbox"> <span id="background" class="bg-light"></span>
-            <input type="checkbox" id="coll-checkbox"> <label style="z-index: 20" for="coll-checkbox" id="mobile-collapsible"><i class="fa-solid fa-bars"></i></label>
+    <?php
+// Ładowanie konfiguracji bazy danych
+$db = parse_ini_file('config.ini', true);
+
+// Sprawdzenie połączenia z bazą danych
+$link = new mysqli($db['database']['db_host'], $db['database']['db_user'], $db['database']['db_password'], $db['database']['db_name']);
+
+// Obsługa błędów połączenia
+if ($link->connect_error) {
+    die("Błąd połączenia z bazą danych: " . $link->connect_error);
+}
+?>
+
+<div id="header-content-mobile" class="mobile-display">
+    <div id="mobile-header-bg"></div>
+    <form action="index.php" method="get">
+        <button id="main-page-button" type="submit" name="site" value="glowna" style="margin-left: 10px">
+            <i class="fa-solid fa-house" style="color: white; font-size: 24px; transform: translateY(4px)"></i>
+        </button>
+        <input type="checkbox" <?php if(isset($_GET['dm'])) echo 'checked'?> name="dm" class="dark-mode-checkbox">
+        <span id="background" class="bg-light"></span>
+        <input type="checkbox" id="coll-checkbox">
+        <label style="z-index: 20" for="coll-checkbox" id="mobile-collapsible">
+            <i class="fa-solid fa-bars"></i>
+        </label>
+        
+        <div id="mobile-menu">
             
-            <div id="mobile-menu">
-                <button type="submit" class="poppins <?php if(isset($_GET['site'])) if($_GET['site'] == 'programista') echo 'chosen-color'?>" name="site" value="programista"><i class="fa fa-desktop" style="font-size: 20px;"></i> Programista</button>
-                <button type="submit" class="poppins <?php if(isset($_GET['site'])) if($_GET['site'] == 'gastronomia') echo 'chosen-color'?>" name="site" value="gastronom" style="margin-top: -1px"><i class="fa-solid fa-utensils" style="font-size: 20px;"></i> Gastronomia</button>
-                <a class="mobile-menu-link" href="login.php" class="poppins" style="margin-top: -1px"><i class="fa-sharp fa-solid fa-right-to-bracket" style="font-size: 20px;"></i> Zaloguj się</a>
+            
+            <div id="mobile-buttons">
+            <select name="site" id="category-selector-mobile" onchange="this.form.submit()" style="margin-top: -20px;margin-bottom: -1px;background-color: var(--main-col);text-align: center;color: white;border: 1px solid var(--main-col);outline:none;font-size: 5vh;">
+                <?php
+                    // Zapytanie do bazy danych, aby pobrać kategorie
+                    $result = $link->query("SELECT * FROM er_sekcja");
+
+                    // Sprawdzamy, czy zapytanie zwróciło jakiekolwiek dane
+                    if ($result && $result->num_rows > 0) {
+                        // Generowanie opcji w select
+                        while ($row = $result->fetch_assoc()) {
+                            // Sprawdzanie, czy to ta kategoria jest wybrana
+                            // Użycie strtolower do zamiany na małe litery
+        $value = strtolower($row['nazwa']);
+        $selected = ($value === $currentSite) ? 'selected' : '';
+        echo "<option value='" . htmlspecialchars($value) . "' $selected>" . 
+             htmlspecialchars($row['nazwa']) . "</option>\n";
+    
+                        }
+                    } else {
+                        echo '<option value="">Brak kategorii w bazie danych</option>';
+                    }
+                ?>
+            </select>
                 <?php 
-                    if(isset($_SESSION['userid'])) echo '<a class="mobile-menu-link" href="profil.php" class="poppins" style="margin-top: -1px"><i class="fa-solid fa-user" style="font-size: 20px;"></i> Profil</a>';
-                    if(isset($_SESSION['userid'])) echo '<a class="mobile-menu-link" href="dodaj.php" class="poppins" style="margin-top: -1px"><i class="fa-solid fa-pen-nib" style="font-size: 20px;"></i> Dodaj artykuł</a>'; 
+                    if(isset($_SESSION['userid'])) {
+                        echo '
+                        <a class="mobile-menu-link" href="profil.php" class="poppins" style="margin-top:0px">
+                            <i class="fa-solid fa-user" style="font-size: 20px;"></i> Profil
+                        </a>
+                        <a class="mobile-menu-link" href="dodaj.php" class="poppins">
+                            <i class="fa-solid fa-pen-nib" style="font-size: 20px;"></i> Dodaj artykuł
+                        </a>
+                        <a class="mobile-menu-link" href="logout.php" class="poppins">
+                            <i class="fa-sharp fa-solid fa-right-to-bracket" style="font-size: 20px;"></i> Wyloguj się
+                        </a>';
+                    } else {
+                        echo '
+                        <a class="mobile-menu-link" href="login.php" class="poppins">
+                            <i class="fa-sharp fa-solid fa-right-to-bracket" style="font-size: 20px;"></i> Zaloguj się
+                        </a>';
+                    }
                 ?>
             </div>
-            </div>
+        </div>
+    </form>
+</div>
+
     </form>
 
     

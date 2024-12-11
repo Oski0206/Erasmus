@@ -235,7 +235,8 @@ if (isset($_GET['site'])) {
     $query = "select * from ".$db['db_prefix']."artykuly where sekcja ='".$section_id."' ORDER BY `id` DESC;";
     $result = $link->query($query);
 
-    if(!$result) echo '<p>Brak postów do wyświetlenia</p>';
+    if ($result->num_rows == 0) 
+      echo '<p>Brak postów do wyświetlenia</p>';
     
 
     if(isset($_SESSION['userid'])) $adminPerms = $link->query('select admin from '.$db['db_prefix'].'uzytkownik where id = '.$_SESSION['userid'].';')->fetch_assoc()['admin'];
