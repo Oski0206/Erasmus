@@ -39,40 +39,55 @@
     ?>
 
     <div id="content" class="profile">
-        <?php 
+    <?php 
             $db = parse_ini_file('config.ini');
-            if(isset($_SESSION['userid'])){
+            if(isset($_SESSION['userid'])) {
                 $link = new mysqli($db['db_host'], $db['db_user'], $db['db_password'], $db['db_name']);
-
-                $link -> set_charset('utf8');
-
-                $query = "select * from ".$db['db_prefix']."uzytkownik where id ='".$_SESSION['userid']."';";
-                $result = $link->query($query);
-                $userdata = $result -> fetch_assoc();
-                echo '<h1>'.$userdata['imie'].' '.$userdata['nazwisko'].'</h1>';
-                echo '<p><strong>Login</strong>: '.$userdata['login'].'</p><br>';
-                echo '<h2>Uprawnienia: </h2>';
-                echo '<p><strong>Admin</strong>: <i>';
-                echo (bool)$userdata['admin'] ? 'tak' : 'nie';
-                if((bool)$userdata['admin']) echo '<p ><strong><a style="color: black" href="panel_administracyjny.php">Panel Administracyjny</a><strong><p>';
-                echo '</i></p>';
-
-                if(isset($_POST['pass']) && isset($_POST['newpass']) && isset($_POST['newpass2'])){
-                    if(password_verify($_POST['pass'], $userdata['haslo'])){
-                        if($_POST['newpass'] == $_POST['newpass2']){
-                            $query = "UPDATE `".$db['db_prefix']."uzytkownik` SET `haslo` = ? WHERE `uzytkownik`.`id` = ?; ";
-                            $stmt = $link -> prepare($query);
-                            $hash = (string)password_hash($_POST['newpass'], PASSWORD_DEFAULT);
-                            $stmt->bind_param("si", $hash, $_SESSION['userid']);
-                            $stmt->execute();
-                            echo 'POMYŚLNIE ZMIENIONO HASŁO';
-                        }
-                        else echo 'PODANE HASŁA NIE SĄ TAKIE SAME';
-                    } 
-                    else echo 'NIEPOPRAWNE HASŁO';
+                $link->set_charset('utf8');
+                if ($link->connect_error) {
+                    die("Błąd połączenia: " . $link->connect_error);
                 }
 
-                $link -> close();
+                $query = "SELECT * FROM " . $db['db_prefix'] . "uzytkownik WHERE id = ?";
+                $stmt = $link->prepare($query);
+                $stmt->bind_param("i", $_SESSION['userid']);
+                $stmt->execute();
+                $result = $stmt->get_result();
+                $userdata = $result->fetch_assoc();
+                $stmt->close();
+
+                if ($userdata) {
+                    echo '<h1>' . htmlspecialchars($userdata['imie']) . ' ' . htmlspecialchars($userdata['nazwisko']) . '</h1>';
+                    echo '<p><strong>Login</strong>: ' . htmlspecialchars($userdata['login']) . '</p><br>';
+                    echo '<h2>Uprawnienia: </h2>';
+                    echo '<p><strong>Admin</strong>: <i>' . ((bool)$userdata['admin'] ? 'tak' : 'nie') . '</i></p>';
+                    if ((bool)$userdata['admin']) {
+                        echo '<p><strong><a style="color: black" href="panel_administracyjny.php">Panel Administracyjny</a></strong></p>';
+                    }
+                }
+
+                if(isset($_POST['pass'], $_POST['newpass'], $_POST['newpass2'])) {
+                    if(password_verify($_POST['pass'], $userdata['haslo'])) {
+                        if($_POST['newpass'] === $_POST['newpass2']) {
+                            $query = "UPDATE `" . $db['db_prefix'] . "uzytkownik` SET `haslo` = ? WHERE `id` = ?";
+                            $stmt = $link->prepare($query);
+                            $hash = password_hash($_POST['newpass'], PASSWORD_DEFAULT);
+                            $stmt->bind_param("si", $hash, $_SESSION['userid']);
+                            if ($stmt->execute()) {
+                                echo '<p class="success">POMYŚLNIE ZMIENIONO HASŁO</p>';
+                            } else {
+                                echo '<p class="error">Błąd podczas zmiany hasła: ' . $stmt->error . '</p>';
+                            }
+                            $stmt->close();
+                        } else {
+                            echo '<p class="error">PODANE HASŁA NIE SĄ TAKIE SAME</p>';
+                        }
+                    } else {
+                        echo '<p class="error">NIEPOPRAWNE HASŁO</p>';
+                    }
+                }
+                
+                $link->close();
             }
             if(isset($_SESSION['userid'])) require_once 'profil_content.php';
         ?>
